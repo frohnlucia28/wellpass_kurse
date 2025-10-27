@@ -155,54 +155,15 @@ if filtered_df.empty:
 # ------------------------------
 # 🗂 Tabs
 # ------------------------------
-tab1, tab2, tab3, tab4 = st.tabs([
-    "📋 Tabellenansicht",
-    "🗓️ Wochenansicht",
+tab1, tab2 = st.tabs([
     "🕓 Stundenraster",
     "📅 Stundenplan-Ansicht"
 ])
 
 # ------------------------------------------------------------
-# 📋 TAB 1
+# 🕓 TAB 1 – Stundenraster
 # ------------------------------------------------------------
 with tab1:
-    st.markdown("### 📋 Kursübersicht")
-    tage_order = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
-
-    clean_df = (
-        filtered_df[["Tag", "Uhrzeit", "Kurs", "Ort"]]
-        .assign(Tag=pd.Categorical(filtered_df["Tag"], categories=tage_order, ordered=True))
-        .sort_values(["Tag", "Uhrzeit"])
-        .reset_index(drop=True)
-    )
-
-    def color_text(val):
-        color = ort_farben.get(val, "#000000")
-        return f"color: {color}; font-weight: 600;"
-
-    styler = clean_df.style.map(color_text, subset=["Ort"])
-    st.dataframe(styler, hide_index=True, use_container_width=True)
-
-# ------------------------------------------------------------
-# 🗓️ TAB 2
-# ------------------------------------------------------------
-with tab2:
-    st.markdown("### 🗓️ Wochenansicht nach Tagen")
-    tage_order = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
-
-    for tag in tage_order:
-        day_df = filtered_df[filtered_df["Tag"] == tag].sort_values("Uhrzeit").reset_index(drop=True)
-        if not day_df.empty:
-            st.subheader(f"📅 {tag}")
-            styler = day_df[["Uhrzeit", "Kurs", "Ort"]].style.map(
-                lambda val: f"color: {ort_farben.get(val, '#000')}; font-weight: 600;", subset=["Ort"]
-            )
-            st.dataframe(styler, hide_index=True, use_container_width=True)
-
-# ------------------------------------------------------------
-# 🕓 TAB 3 – Stundenraster
-# ------------------------------------------------------------
-with tab3:
     st.markdown("### 🕓 Stundenraster")
 
     hide_empty = st.checkbox("🔘 Nur Stunden mit Kursen anzeigen", value=False)
@@ -316,9 +277,9 @@ with tab3:
     components.html(full_html, height=900, scrolling=True)
 
 # ------------------------------------------------------------
-# 📅 TAB 4 – Stundenplan
+# 📅 TAB 2 – Stundenplan
 # ------------------------------------------------------------
-with tab4:
+with tab2:
     st.markdown("### 🕓 Stundenplan – Stundenweise Ansicht")
 
     tage_order = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]
